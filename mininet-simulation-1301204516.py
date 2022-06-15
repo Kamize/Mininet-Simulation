@@ -94,6 +94,12 @@ def runTopo():
     h2.cmd('ifconfig hostB-fa0 192.168.1.25 netmask 255.255.255.252') #network 7
     h2.cmd('ifconfig hostB-fa1 192.168.1.29 netmask 255.255.255.252') #network 8
 
+    #Enabling routers IP Forwarding for hosts
+    r1.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
+    r2.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
+    r3.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
+    r4.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
+    
     #Configure IP addresses for routers
     
     #define NIC for r1
