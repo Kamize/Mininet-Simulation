@@ -49,8 +49,8 @@ class MyTopo(Topo):
                     cls = TCLink,
                     bw=bw1) #network 7
         self.addLink(hostB, r4,
-                    intfName1 = 'hostB-fa1', 
-                    intfName2 = 'r4-fa1'
+                    intfName1 = 'hostB-fa1',
+                    intfName2 = 'r4-fa1',
                     cls = TCLink,
                     bw=bw1) #network 8
         
@@ -77,13 +77,66 @@ def runTopo():
     
     #Put object into variables for easy access
     h1,h2,r1,r2,r3,r4 = net.get('hostA','hostB','r1','r2','r3','r4')
-    
 
+    #Configure IP addresses for hosts
+
+    #define NIC for hostA
+    h1.cmd('ifcongfig hostA-fa0 0')
+    h1.cmd('ifcongfig hostA-fa1 0')
+    #define IP address for hostA interfaces
+    h1.cmd('ifconfig hostA-fa0 192.168.1.1 netmask 255.255.255.252') #network 1
+    h1.cmd('ifconfig hostA-fa1 192.168.1.5 netmask 255.255.255.252') #network 2
+
+    #define NIC for hostB
+    h2.cmd('ifcongfig hostB-fa0 0')
+    h2.cmd('ifcongfig hostB-fa1 0')
+    #define IP address for hostB interfaces
+    h2.cmd('ifconfig hostB-fa0 192.168.1.25 netmask 255.255.255.252') #network 7
+    h2.cmd('ifconfig hostB-fa1 192.168.1.29 netmask 255.255.255.252') #network 8
+
+    #Configure IP addresses for routers
+    
+    #define NIC for r1
+    r1.cmd('ifcongfig r1-fa0 0')
+    r1.cmd('ifcongfig r1-se2 0')
+    r1.cmd('ifcongfig r1-se3 0')
+    #define IP address for r1 interfaces
+    r1.cmd('ifconfig r1-fa0 192.168.1.2 netmask 255.255.255.252') #network 1
+    r1.cmd('ifconfig r1-se2 192.168.1.9 netmask 255.255.255.252') #network 3
+    r1.cmd('ifconfig r1-se3 192.168.1.17 netmask 255.255.255.252') #network 5
+
+    #define NIC for r2
+    r2.cmd('ifcongfig r2-fa0 0')
+    r2.cmd('ifcongfig r2-se2 0')
+    r2.cmd('ifcongfig r2-se3 0')
+    #define IP address for r2 interfaces
+    r2.cmd('ifconfig r2-fa0 192.168.1.6 netmask 255.255.255.252') #network 2
+    r2.cmd('ifconfig r2-se2 192.168.1.13 netmask 255.255.255.252') #network 4
+    r2.cmd('ifconfig r2-se3 192.168.1.21 netmask 255.255.255.252') #network 6
+
+    #define NIC for r3
+    r3.cmd('ifcongfig r3-fa0 0')
+    r3.cmd('ifcongfig r3-se2 0')
+    r3.cmd('ifcongfig r3-se3 0')
+    #define IP address for r3 interfaces
+    r3.cmd('ifconfig r3-fa0 192.168.1.26 netmask 255.255.255.252') #network 7
+    r3.cmd('ifconfig r3-se2 192.168.1.10 netmask 255.255.255.252') #network 3
+    r3.cmd('ifconfig r3-se3 192.168.1.22 netmask 255.255.255.252') #network 6
+
+    #define NIC for r4
+    r4.cmd('ifcongfig r4-fa0 0')
+    r4.cmd('ifcongfig r4-se2 0')
+    r4.cmd('ifcongfig r4-se3 0')
+    #define IP address for r4 interfaces
+    r4.cmd('ifconfig r4-fa0 192.168.1.30 netmask 255.255.255.252') #network 8
+    r4.cmd('ifconfig r4-se2 192.168.1.14 netmask 255.255.255.252') #network 4
+    r4.cmd('ifconfig r4-se3 192.168.1.18 netmask 255.255.255.252') #network 5
+    
     # net.start()
     #Ping All
     #info('\n', net.ping(), '\n')
 
-    
+
 
 if __name__=='__main__':
     setLogLevel('info')
