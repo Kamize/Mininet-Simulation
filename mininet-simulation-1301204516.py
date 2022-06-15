@@ -29,9 +29,6 @@ class MyTopo(Topo):
         r3 = self.addHost('r3', ip='192.168.255.5/30')
         r4 = self.addHost('r4', ip='192.168.255.6/30')
         
-        #Creating the switches
-        s1 = self.addSwitch('s1')
-        s2 = self.addSwitch('s2')
 
         #Creating the links between host and switch
         self.addLink(hostA, s1,intfName1='s1-eth1') #network A (192.168.255.0/24)
