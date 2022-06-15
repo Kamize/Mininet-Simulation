@@ -1,0 +1,9 @@
+#verify MPTCP
+sysctl net.mptcp
+
+#turn on MPTCP
+sudo sysctl -w net.mptcp.mptcp_enabled=1
+
+#turn off MPTCP / back to TCP
+sudo sysctl -w net.mptcp.mptcp_enabled=0
+

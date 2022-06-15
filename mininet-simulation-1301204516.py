@@ -1,5 +1,5 @@
 #!/usr/bin/python
-
+from mininet.topo import Topo
 from mininet.net import Mininet
 from mininet.node import Controller, OVSSwitch
 from mininet.cli import CLI
@@ -47,8 +47,6 @@ class MyTopo(Topo):
         self.addLink(r1, r4, intfName1='r1-eth2', intfName2='r4-eth2', bw=bw1)
         self.addLink(r2, r3, intfName1='r2-eth2', intfName2='r3-eth2', bw=bw1)
 
-
-
 def runTopo():
     '''Bootstrap a Mininet network using the Minimal Topology'''
     os.system('mn -cc')
@@ -56,6 +54,12 @@ def runTopo():
     topo = MyTopo()
     net = Mininet(topo=topo, link=TCLink, controller=None)
     net.start()
+
+    #Put object into variables for easy access
+    h1,h2,r1,r2,r3,r4,s1,s2 = net.get('hostA','hostB','r1','r2','r3','r4','s1','s2')
+    
+    #Ping All
+    info('\n', net.ping(), '\n')
 
 if __name__=='__main__':
     setLogLevel('info')
