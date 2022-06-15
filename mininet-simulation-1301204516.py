@@ -66,17 +66,8 @@ class MyTopo(Topo):
         #Network 6
         self.addLink(r2, r3, intfName1='r2-se3', intfName2='r3-se3', cls = TCLink, bw=bw1)
 
-def runTopo():
-    '''Bootstrap a Mininet network using the Minimal Topology'''
-    os.system('mn -cc')
-
-    topo = MyTopo()
-    net = Mininet(topo=topo, link=TCLink, controller=None)
-    
-    net.build()
-    
-    #Put object into variables for easy access
-    h1,h2,r1,r2,r3,r4 = net.get('hostA','hostB','r1','r2','r3','r4')
+def assign_IP(h1,h2,r1,r2,r3,r4):
+    '''Assign IP addresses to the hosts & routers'''
 
     #Configure IP addresses for hosts
 
@@ -99,7 +90,7 @@ def runTopo():
     r2.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
     r3.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
     r4.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
-    
+
     #Configure IP addresses for routers
     
     #define NIC for r1
@@ -137,10 +128,56 @@ def runTopo():
     r4.cmd('ifconfig r4-fa0 192.168.1.30 netmask 255.255.255.252') #network 8
     r4.cmd('ifconfig r4-se2 192.168.1.14 netmask 255.255.255.252') #network 4
     r4.cmd('ifconfig r4-se3 192.168.1.18 netmask 255.255.255.252') #network 5
+
+def runTopo():
+    '''Bootstrap a Mininet network using the Minimal Topology'''
+    os.system('mn -cc')
+
+    topo = MyTopo()
+    net = Mininet(topo=topo, link=TCLink, controller=None)
     
-    # net.start()
-    #Ping All
-    #info('\n', net.ping(), '\n')
+    #Build the network based on topology
+    net.build()
+    #Put object into variables for easy access
+    h1,h2,r1,r2,r3,r4 = net.get('hostA','hostB','r1','r2','r3','r4')
+    #Assign IP addresses to the hosts & routers
+    assign_IP(h1,h2,r1,r2,r3,r4)
+    
+    #Ping test for CLO 1
+    info('\n', net.pingAll(), '\n')
+    info('*** Testing ping between hosts\n')
+    net.cmdPrint('h1 ping r1')
+    info('\n', net.pingAll(), '\n')
+    net.cmdPrint('h1 ping r2')
+    info('\n', net.pingAll(), '\n')
+    net.cmdPrint('h1 ping r3')
+    info('\n', net.pingAll(), '\n')
+    net.cmdPrint('h1 ping r4')
+    info('\n', net.pingAll(), '\n')
+    
+    net.cmdPrint('h2 ping r1')
+    info('\n', net.pingAll(), '\n')
+    net.cmdPrint('h2 ping r2')
+    info('\n', net.pingAll(), '\n')
+    net.cmdPrint('h2 ping r3')
+    info('\n', net.pingAll(), '\n')
+    net.cmdPrint('h2 ping r4')
+    info('\n', net.pingAll(), '\n')
+    
+    net.cmdPrint('r1 ping r2')
+    info('\n', net.pingAll(), '\n')
+    net.cmdPrint('r1 ping r3')
+    info('\n', net.pingAll(), '\n') 
+    net.cmdPrint('r1 ping r4')
+    info('\n', net.pingAll(), '\n')
+    
+    net.cmdPrint('r2 ping r3')
+    info('\n', net.pingAll(), '\n')
+    net.cmdPrint('r2 ping r4')
+    info('\n', net.pingAll(), '\n')
+    
+    net.cmdPrint('r3 ping r4')
+    info('\n', net.pingAll(), '\n')
 
 
 
