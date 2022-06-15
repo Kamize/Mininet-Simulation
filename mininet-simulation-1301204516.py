@@ -20,29 +20,51 @@ class MyTopo(Topo):
         bw1 = 1
         bw2 = 0.5
         #Creating the nodes/hosts
-        hostA = self.addHost('hostA', ip='192.168.1.10/24')
-        hostB = self.addHost('hostB', ip='192.168.1.20/24')
+        hostA = self.addHost('hostA') 
+        hostB = self.addHost('hostB')
         
         #Creating the routers
-        r1 = self.addHost('r1', ip='192.168.255.1/30') 
-        r2 = self.addHost('r2', ip='192.168.255.2/30')
-        r3 = self.addHost('r3', ip='192.168.255.5/30')
-        r4 = self.addHost('r4', ip='192.168.255.6/30')
+        r1 = self.addHost('r1') 
+        r2 = self.addHost('r2')
+        r3 = self.addHost('r3')
+        r4 = self.addHost('r4')
         
-
-        #Creating the links between host and switch
-        self.addLink(hostA, s1,intfName1='s1-eth1') #network A (192.168.255.0/24)
-        self.addLink(hostB, s2,intfName1='s2-eth1') #network B (192.168.255.4/24)
-        #Creating the links between switch and routers
-        self.addLink(s1, r1, intfName1='r1-eth0', intfName2='s1-eth1', bw=bw1)
-        self.addLink(s1, r2, intfName1='r2-eth0', intfName2='s2-eth1', bw=bw1)
-        self.addLink(s2, r3, intfName1='r3-eth0', intfName2='s2-eth1', bw=bw1)
-        self.addLink(s2, r4, intfName1='r4-eth0', intfName2='s1-eth1', bw=bw1)
+        #Creating the links between host and routers
+        
+        #Host A
+        self.addLink(hostA, r1,
+                    intfName1 = 'hostA-fa0', 
+                    intfName2 = 'r1-fa0',
+                    cls = TCLink,
+                    bw=bw1) #network 1
+        self.addlink(hostA, r2,
+                    intfName1 = 'hostA-fa1', 
+                    intfName2 = 'r2-fa1',
+                    cls = TCLink,
+                    bw=bw1) #network 2
+        #Host B
+        self.addLink(hostB, r3,
+                    intfName1 = 'hostB-fa0', 
+                    intfName2 = 'r3-fa0',
+                    cls = TCLink,
+                    bw=bw1) #network 7
+        self.addLink(hostB, r4,
+                    intfName1 = 'hostB-fa1', 
+                    intfName2 = 'r4-fa1'
+                    cls = TCLink,
+                    bw=bw1) #network 8
+        
         #Creating the links between routers
-        self.addLink(r1, r3, intfName1='r1-eth1', intfName2='r3-eth1', bw=bw2)
-        self.addLink(r2, r4, intfName1='r2-eth1', intfName2='r4-eth1', bw=bw2)
-        self.addLink(r1, r4, intfName1='r1-eth2', intfName2='r4-eth2', bw=bw1)
-        self.addLink(r2, r3, intfName1='r2-eth2', intfName2='r3-eth2', bw=bw1)
+        
+        #Network 3
+        self.addLink(r1, r3, intfName1='r1-se2', intfName2='r3-se2', cls = TCLink, bw=bw2)
+        #Network 5
+        self.addLink(r1, r4, intfName1='r1-se3', intfName2='r4-se3', cls = TCLink, bw=bw1)
+        
+        #Network 4
+        self.addLink(r2, r4, intfName1='r2-se2', intfName2='r4-se2', cls = TCLink, bw=bw2)
+        #Network 6
+        self.addLink(r2, r3, intfName1='r2-se3', intfName2='r3-se3', cls = TCLink, bw=bw1)
 
 def runTopo():
     '''Bootstrap a Mininet network using the Minimal Topology'''
@@ -50,13 +72,18 @@ def runTopo():
 
     topo = MyTopo()
     net = Mininet(topo=topo, link=TCLink, controller=None)
-    net.start()
-
-    #Put object into variables for easy access
-    h1,h2,r1,r2,r3,r4,s1,s2 = net.get('hostA','hostB','r1','r2','r3','r4','s1','s2')
     
+    net.build()
+    
+    #Put object into variables for easy access
+    h1,h2,r1,r2,r3,r4 = net.get('hostA','hostB','r1','r2','r3','r4')
+    
+
+    # net.start()
     #Ping All
-    info('\n', net.ping(), '\n')
+    #info('\n', net.ping(), '\n')
+
+    
 
 if __name__=='__main__':
     setLogLevel('info')
