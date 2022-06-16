@@ -37,7 +37,7 @@ class MyTopo(Topo):
                     intfName2 = 'r1-fa0',
                     cls = TCLink,
                     bw=bw1) #network 1
-        self.addlink(hostA, r2,
+        self.addLink(hostA, r2,
                     intfName1 = 'hostA-fa1', 
                     intfName2 = 'r2-fa1',
                     cls = TCLink,
@@ -144,40 +144,29 @@ def runTopo():
     assign_IP(h1,h2,r1,r2,r3,r4)
     
     #Ping test for CLO 1
-    info('\n', net.pingAll(), '\n')
+
     info('*** Testing ping between hosts\n')
-    net.cmdPrint('h1 ping r1')
-    info('\n', net.pingAll(), '\n')
-    net.cmdPrint('h1 ping r2')
-    info('\n', net.pingAll(), '\n')
-    net.cmdPrint('h1 ping r3')
-    info('\n', net.pingAll(), '\n')
-    net.cmdPrint('h1 ping r4')
+    h1.cmdPrint('ping -c1 192.168.1.2') #hostA ping r1 (network 1)
+    h1.cmdPrint('ping -c1 192.168.1.6') #hostA ping r2 (network 2)
+    h1.cmdPrint('ping -c1 192.168.1.10') #hostA ping r3
+    h1.cmdPrint('ping -c1 192.168.1.14') #hostA ping r4
+    
+    h2.cmdPrint('ping -c1 192.168.1.9') #hostB ping r1
+    h2.cmdPrint('ping -c1 192.168.1.13') #hostB ping r2
+    h2.cmdPrint('ping -c1 192.168.1.26') #hostB ping r3 (network 7)
+    h2.cmdPrint('ping -c1 192.168.1.30') #hostB ping r4 (network 8)
+    
+    r1.cmdPrint('ping -c1 192.168.1.21') #r1 ping r2
+    r1.cmdPrint('ping -c1 192.168.1.10') #r1 ping r3 (network 3)
+    r1.cmdPrint('ping -c1 192.168.1.18') #r1 ping r4 (network 5)
+    
+    r2.cmdPrint('ping -c1 192.168.1.22') #r2 ping r3 (network 5)
+    r2.cmdPrint('ping -c1 192.168.1.9') #r2 ping r1
+    
+    r3.cmdPrint('ping -c1 192.168.1.14') #r3 ping r4
     info('\n', net.pingAll(), '\n')
     
-    net.cmdPrint('h2 ping r1')
-    info('\n', net.pingAll(), '\n')
-    net.cmdPrint('h2 ping r2')
-    info('\n', net.pingAll(), '\n')
-    net.cmdPrint('h2 ping r3')
-    info('\n', net.pingAll(), '\n')
-    net.cmdPrint('h2 ping r4')
-    info('\n', net.pingAll(), '\n')
-    
-    net.cmdPrint('r1 ping r2')
-    info('\n', net.pingAll(), '\n')
-    net.cmdPrint('r1 ping r3')
-    info('\n', net.pingAll(), '\n') 
-    net.cmdPrint('r1 ping r4')
-    info('\n', net.pingAll(), '\n')
-    
-    net.cmdPrint('r2 ping r3')
-    info('\n', net.pingAll(), '\n')
-    net.cmdPrint('r2 ping r4')
-    info('\n', net.pingAll(), '\n')
-    
-    net.cmdPrint('r3 ping r4')
-    info('\n', net.pingAll(), '\n')
+    CLI(net)
 
 
 
