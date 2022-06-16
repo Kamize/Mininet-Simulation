@@ -1,4 +1,5 @@
 #!/usr/bin/python
+from multiprocessing.sharedctypes import Value
 from mininet.topo import Topo
 from mininet.net import Mininet
 from mininet.node import Controller, OVSSwitch
@@ -8,6 +9,7 @@ from mininet.link import TCLink
 from time import time
 from mininet.util import pmonitor
 from signal import SIGINT
+from subprocess import Popen, PIPE
 import os
 
 class MyTopo(Topo):
@@ -280,6 +282,11 @@ def static_routing(h1,h2,r1,r2,r3,r4):
 def runTopo():
     '''Bootstrap a Mininet network using the Minimal Topology'''
     os.system('mn -cc')
+    key = 'net.mptcp.enabled'
+    value = 1
+    p = Popen("sysctl -w %s=%s" %(key,value), shell=True, stdout=PIPE, stderr=PIPE)
+    stdout, stderr = p.communicate()
+    print("stdout=",stdout,"stderr=",stderr)
 
     topo = MyTopo()
     net = Mininet(topo=topo, link=TCLink, controller=None)
