@@ -283,6 +283,29 @@ def static_routing(h1,h2,r1,r2,r3,r4):
     # r4.cmd('route add -net 192.168.1.24/30 gw 192.168.1.13') #via network 4
     # r4.cmd('route add -net 192.168.1.24/30 gw 192.168.1.17') #via network 5
 
+def test_ping(h1, h2, r1, r2, r3, r4):
+    # Ping test for CLO 1
+    info('*** Testing ping between hosts\n')
+    h1.cmdPrint('ping -c1 192.168.1.2') #hostA ping r1 (network 1)
+    h1.cmdPrint('ping -c1 192.168.1.6') #hostA ping r2 (network 2)
+    h1.cmdPrint('ping -c1 192.168.1.10') #hostA ping r3
+    h1.cmdPrint('ping -c1 192.168.1.14') #hostA ping r4
+
+    h2.cmdPrint('ping -c1 192.168.1.9') #hostB ping r1
+    h2.cmdPrint('ping -c1 192.168.1.13') #hostB ping r2
+    h2.cmdPrint('ping -c1 192.168.1.26') #hostB ping r3 (network 7)
+    h2.cmdPrint('ping -c1 192.168.1.30') #hostB ping r4 (network 8)
+
+    r1.cmdPrint('ping -c1 192.168.1.21') #r1 ping r2
+    r1.cmdPrint('ping -c1 192.168.1.10') #r1 ping r3 (network 3)
+    r1.cmdPrint('ping -c1 192.168.1.18') #r1 ping r4 (network 5)
+
+    r2.cmdPrint('ping -c1 192.168.1.22') #r2 ping r3 (network 5)
+    r2.cmdPrint('ping -c1 192.168.1.9') #r2 ping r1
+
+    r3.cmdPrint('ping -c1 192.168.1.14') #r3 ping r4
+    info('\n', net.pingAll(), '\n')
+
 def runTopo():
     '''Bootstrap a Mininet network using the Minimal Topology'''
     os.system('mn -cc')
@@ -303,27 +326,6 @@ def runTopo():
     assign_IP(h1,h2,r1,r2,r3,r4)
     static_routing(h1,h2,r1,r2,r3,r4)
     
-    #Ping test for CLO 1
-    # info('*** Testing ping between hosts\n')
-    # h1.cmdPrint('ping -c1 192.168.1.2') #hostA ping r1 (network 1)
-    # h1.cmdPrint('ping -c1 192.168.1.6') #hostA ping r2 (network 2)
-    # h1.cmdPrint('ping -c1 192.168.1.10') #hostA ping r3
-    # h1.cmdPrint('ping -c1 192.168.1.14') #hostA ping r4
-    
-    # h2.cmdPrint('ping -c1 192.168.1.9') #hostB ping r1
-    # h2.cmdPrint('ping -c1 192.168.1.13') #hostB ping r2
-    # h2.cmdPrint('ping -c1 192.168.1.26') #hostB ping r3 (network 7)
-    # h2.cmdPrint('ping -c1 192.168.1.30') #hostB ping r4 (network 8)
-    
-    # r1.cmdPrint('ping -c1 192.168.1.21') #r1 ping r2
-    # r1.cmdPrint('ping -c1 192.168.1.10') #r1 ping r3 (network 3)
-    # r1.cmdPrint('ping -c1 192.168.1.18') #r1 ping r4 (network 5)
-    
-    # r2.cmdPrint('ping -c1 192.168.1.22') #r2 ping r3 (network 5)
-    # r2.cmdPrint('ping -c1 192.168.1.9') #r2 ping r1
-    
-    # r3.cmdPrint('ping -c1 192.168.1.14') #r3 ping r4
-    # info('\n', net.pingAll(), '\n')
     
     CLI(net)
     net.stop()
