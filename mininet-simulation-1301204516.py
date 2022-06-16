@@ -304,7 +304,6 @@ def test_ping(h1, h2, r1, r2, r3, r4):
     r2.cmdPrint('ping -c1 192.168.1.9') #r2 ping r1
 
     r3.cmdPrint('ping -c1 192.168.1.14') #r3 ping r4
-    info('\n', net.pingAll(), '\n')
 
 def runTopo():
     '''Bootstrap a Mininet network using the Minimal Topology'''
@@ -326,6 +325,9 @@ def runTopo():
     assign_IP(h1,h2,r1,r2,r3,r4)
     static_routing(h1,h2,r1,r2,r3,r4)
     
+    #test ping
+    # test_ping(h1,h2,r1,r2,r3,r4)
+    # info('\n', net.pingAll(), '\n')
     
     CLI(net)
     net.stop()
