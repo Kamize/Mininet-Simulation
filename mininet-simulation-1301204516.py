@@ -89,10 +89,14 @@ def assign_IP(h1,h2,r1,r2,r3,r4):
     h2.cmd('ifconfig hostB-fa1 192.168.1.29 netmask 255.255.255.252') #network 8
 
     #Enabling routers IP Forwarding for hosts
-    r1.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
-    r2.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
-    r3.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
-    r4.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
+    # r1.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
+    # r2.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
+    # r3.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
+    # r4.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
+    r1.cmd('sysctl -w net.ipv4.ip_forward=1')
+    r2.cmd('sysctl -w net.ipv4.ip_forward=1')
+    r3.cmd('sysctl -w net.ipv4.ip_forward=1')
+    r4.cmd('sysctl -w net.ipv4.ip_forward=1')
 
     #Configure IP addresses for routers
     
@@ -168,13 +172,13 @@ def static_routing(h1,h2,r1,r2,r3,r4):
     r1.cmd('ip rule add from 192.168.1.9 table 2') #network 3
     r1.cmd('ip rule add from 192.168.1.17 table 3') #network 5
     #network 1
-    r1.cmd('ip route add 192.168.1.0/30 dev r1-fa0 table 1')
+    r1.cmd('ip route add 192.168.1.0/30 dev r1-fa0 scope link table 1')
     r1.cmd('ip route add default via 192.168.1.1 dev r1-fa0 table 1')
     #network 3
-    r1.cmd('ip route add 192.168.1.8/30 dev r1-se2 table 2')
+    r1.cmd('ip route add 192.168.1.8/30 dev r1-se2 scope link table 2')
     r1.cmd('ip route add default via 192.168.1.10 dev r1-se2 table 2')
     #network 5
-    r1.cmd('ip route add 192.168.1.16/30 dev r1-se3 table 3')
+    r1.cmd('ip route add 192.168.1.16/30 dev r1-se3 scope link table 3')
     r1.cmd('ip route add default via 192.168.1.18 dev r1-se3 table 3')
     #add default route for r1
     r1.cmd('ip route add default scope global nexthop via 192.168.1.1 dev r1-fa0')
@@ -184,13 +188,13 @@ def static_routing(h1,h2,r1,r2,r3,r4):
     r2.cmd('ip rule add from 192.168.1.13 table 2') #network 4
     r2.cmd('ip rule add from 192.168.1.21 table 3') #network 6
     #network 2
-    r2.cmd('ip route add 192.168.1.4/30 dev r2-fa0 table 1')
+    r2.cmd('ip route add 192.168.1.4/30 dev r2-fa0 scope link table 1')
     r2.cmd('ip route add default via 192.168.1.5 dev r2-fa0 table 1')
     #network 4
-    r2.cmd('ip route add 192.168.1.12/30 dev r2-se2 table 2')
+    r2.cmd('ip route add 192.168.1.12/30 dev r2-se2 scope link table 2')
     r2.cmd('ip route add default via 192.168.1.14 dev r2-se2 table 2')
     #network 6
-    r2.cmd('ip route add 192.168.1.20/30 dev r2-se3 table 3')
+    r2.cmd('ip route add 192.168.1.20/30 dev r2-se3 scope link table 3')
     r2.cmd('ip route add default via 192.168.1.22 dev r2-se3 table 3')
     #add default route for r2
     r2.cmd('ip route add default scope global nexthop via 192.168.1.5 dev r2-fa0')
@@ -200,13 +204,13 @@ def static_routing(h1,h2,r1,r2,r3,r4):
     r3.cmd('ip rule add from 192.168.1.10 table 2') #network 3
     r3.cmd('ip rule add from 192.168.1.22 table 3') #network 6
     #network 7
-    r3.cmd('ip route add 192.168.1.24/30 dev r3-fa0 table 1')
+    r3.cmd('ip route add 192.168.1.24/30 dev r3-fa0 scope link table 1')
     r3.cmd('ip route add default via 192.168.1.25 dev r3-fa0 table 1')
     #network 3
-    r3.cmd('ip route add 192.168.1.8/30 dev r3-se2 table 2')
+    r3.cmd('ip route add 192.168.1.8/30 dev r3-se2 scope link table 2')
     r3.cmd('ip route add default via 192.168.1.9 dev r3-se2 table 2')
     #network 6
-    r3.cmd('ip route add 192.168.1.22/30 dev r3-se3 table 3')
+    r3.cmd('ip route add 192.168.1.22/30 dev r3-se3 scope link table 3')
     r3.cmd('ip route add default via 192.168.1.21 dev r3-se3 table 3')
     #add default route for r3
     r3.cmd('ip route add default scope global nexthop via 192.168.1.25 dev r3-fa0')
@@ -216,13 +220,13 @@ def static_routing(h1,h2,r1,r2,r3,r4):
     r4.cmd('ip rule add from 192.168.1.14 table 2') #network 4
     r4.cmd('ip rule add from 192.168.1.18 table 3') #network 5
     #network 8
-    r4.cmd('ip route add 192.168.1.28/30 dev r4-fa0 table 1')
+    r4.cmd('ip route add 192.168.1.28/30 dev r4-fa0 scope link table 1')
     r4.cmd('ip route add default via 192.168.1.29 dev r4-fa0 table 1')
     #network 4
-    r4.cmd('ip route add 192.168.1.12/30 dev r4-se2 table 2')
+    r4.cmd('ip route add 192.168.1.12/30 dev r4-se2 scope link table 2')
     r4.cmd('ip route add default via 192.168.1.13 dev r4-se2 table 2')
     #network 5
-    r4.cmd('ip route add 192.168.1.16/30 dev r4-se3 table 3')
+    r4.cmd('ip route add 192.168.1.16/30 dev r4-se3 scope link table 3')
     r4.cmd('ip route add default via 192.168.1.17 dev r4-se3 table 3')
     #add default route for r4
     r4.cmd('ip route add default scope global nexthop via 192.168.1.29 dev r4-fa0')
