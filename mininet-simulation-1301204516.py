@@ -6,7 +6,7 @@ from mininet.node import Controller, OVSSwitch
 from mininet.cli import CLI
 from mininet.log import setLogLevel, info
 from mininet.link import TCLink
-from time import time
+from time import time,sleep
 from mininet.util import pmonitor
 from signal import SIGINT
 from subprocess import Popen, PIPE
@@ -89,10 +89,6 @@ def assign_IP(h1,h2,r1,r2,r3,r4):
     h2.cmd('ifconfig hostB-fa1 192.168.1.29 netmask 255.255.255.252') #network 8
 
     #Enabling routers IP Forwarding for hosts
-    # r1.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
-    # r2.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
-    # r3.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
-    # r4.cmd('echo 1 > /proc/sys/net/ipv4/ip_forward')
     r1.cmd('sysctl -w net.ipv4.ip_forward=1')
     r2.cmd('sysctl -w net.ipv4.ip_forward=1')
     r3.cmd('sysctl -w net.ipv4.ip_forward=1')
@@ -331,6 +327,51 @@ def test_pingCLO1(h1, h2, r1, r2, r3, r4):
     r2.cmdPrint('ping -c5 192.168.1.22') #r2 ping r3 (network 6)
     r2.cmdPrint('ping -c5 192.168.1.14') #r2 ping r4 (network 4)
 
+def tcp_traffic(net):
+    h1, h2 = net.get('hostA', 'hostB')
+    h1.cmd('iperf -s &')
+    h1.cmd('tcpdump tcp -c 5 -w 1301204516.pcap &')
+    sleep(1)
+    h2.cmdPrint('iperf -c 192.168.1.1 -t 5')
+    h1.cmdPrint('tcpdump -r 1301204516.pcap')
+
+def buffered_traffic(h1,h2,r1,r2,r3,r4):
+    #buffer = 100
+    r1.cmdPrint("tc qdisc del dev r1-fa0 root")
+    r1.cmdPrint("tc qdisc add dev r1-fa0 root handle 1: pfifo limit 100")
+    h1.cmdPrint("iperf -s &")
+    h1.cmdPrint("tcpdump tcp -c 5 -w buffer100_1301204516.pcap &")
+    sleep(2)
+    h2.cmdPrint("iperf -c 192.168.1.1 -t 60")
+    h1.cmdPrint("tcpdump -r buffer100_1301204516.pcap")
+
+    #buffer = 60
+    r2.cmdPrint("tc qdisc del dev r2-fa0 root")
+    r2.cmdPrint("tc qdisc add dev r2-fa0 root handle 1: pfifo limit 60")
+    h1.cmdPrint("iperf -s &")
+    h1.cmdPrint("tcpdump tcp -c 5 -w buffer60_1301204516.pcap &")
+    sleep(2)
+    h2.cmdPrint("iperf -c 192.168.1.5 -t 60")
+    h1.cmdPrint("tcpdump -r buffer60_1301204516.pcap")
+
+    #buffer = 40
+    r1.cmdPrint("tc qdisc del dev r1-fa0 root")
+    r1.cmdPrint("tc qdisc add dev r1-fa0 root handle 1: pfifo limit 40")
+    h1.cmdPrint("iperf -s &")
+    h1.cmdPrint("tcpdump tcp -c 5 -w buffer40_1301204516.pcap &")
+    sleep(2)
+    h2.cmdPrint("iperf -c 192.168.1.1 -t 60")
+    h1.cmdPrint("tcpdump -r buffer40_1301204516.pcap")
+
+    #buffer = 20
+    r2.cmdPrint("tc qdisc del dev r2-fa0 root")
+    r2.cmdPrint("tc qdisc add dev r2-fa0 root handle 1: pfifo limit 20")
+    h1.cmdPrint("iperf -s &")
+    h1.cmdPrint("tcpdump tcp -c 5 -w buffer20_1301204516.pcap &")
+    sleep(2)
+    h2.cmdPrint("iperf -c 192.168.1.5 -t 60")
+    h1.cmdPrint("tcpdump -r buffer20_1301204516.pcap")
+
 def runTopo():
     '''Bootstrap a Mininet network using the Minimal Topology'''
     os.system('mn -cc')
@@ -350,14 +391,20 @@ def runTopo():
     #Assign IP addresses to the hosts & routers
     assign_IP(h1,h2,r1,r2,r3,r4)
     #CLO 1 Connection Test
-    test_pingCLO1(h1,h2,r1,r2,r3,r4)
+    # test_pingCLO1(h1,h2,r1,r2,r3,r4)
 
     #CLO 2 Static Routing
-    # static_routing(h1,h2,r1,r2,r3,r4)
+    static_routing(h1,h2,r1,r2,r3,r4)
     
     #CLO 2 Connection Test (Static Routing)
     # test_ping(h1,h2,r1,r2,r3,r4)
     # info('\n', net.pingAll(), '\n')
+
+    #CLO 3 inspect traffic using iPerf
+    # tcp_traffic(net)
+
+    #CLO 4 adding buffer to trafficS
+    buffered_traffic(h1,h2,r1,r2,r3,r4)
     
     CLI(net)
     net.stop()
