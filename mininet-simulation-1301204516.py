@@ -330,9 +330,9 @@ def test_pingCLO1(h1, h2, r1, r2, r3, r4):
 def tcp_traffic(net):
     h1, h2 = net.get('hostA', 'hostB')
     h1.cmd('iperf -s &')
+    h2.cmdPrint('iperf -c 192.168.1.1 -t 5')
     h1.cmd('tcpdump tcp -c 5 -w 1301204516.pcap &')
     sleep(1)
-    h2.cmdPrint('iperf -c 192.168.1.1 -t 5')
     h1.cmdPrint('tcpdump -r 1301204516.pcap')
 
 def buffered_traffic(h1,h2,r1,r2,r3,r4):
@@ -340,36 +340,36 @@ def buffered_traffic(h1,h2,r1,r2,r3,r4):
     r1.cmdPrint("tc qdisc del dev r1-fa0 root")
     r1.cmdPrint("tc qdisc add dev r1-fa0 root handle 1: pfifo limit 100")
     h1.cmdPrint("iperf -s &")
-    h1.cmdPrint("tcpdump tcp -c 5 -w buffer100_1301204516.pcap &")
+    h2.cmdPrint("iperf -c 192.168.1.1 -t 100")
+    h1.cmdPrint("tcpdump -c 100 -w buffer100_1301204516.pcap &")
     sleep(2)
-    h2.cmdPrint("iperf -c 192.168.1.1 -t 60")
     h1.cmdPrint("tcpdump -r buffer100_1301204516.pcap")
 
     #buffer = 60
     r2.cmdPrint("tc qdisc del dev r2-fa0 root")
     r2.cmdPrint("tc qdisc add dev r2-fa0 root handle 1: pfifo limit 60")
     h1.cmdPrint("iperf -s &")
-    h1.cmdPrint("tcpdump tcp -c 5 -w buffer60_1301204516.pcap &")
-    sleep(2)
     h2.cmdPrint("iperf -c 192.168.1.5 -t 60")
+    h1.cmdPrint("tcpdump -c 100 -w buffer60_1301204516.pcap &")
+    sleep(2)
     h1.cmdPrint("tcpdump -r buffer60_1301204516.pcap")
 
     #buffer = 40
     r1.cmdPrint("tc qdisc del dev r1-fa0 root")
     r1.cmdPrint("tc qdisc add dev r1-fa0 root handle 1: pfifo limit 40")
     h1.cmdPrint("iperf -s &")
-    h1.cmdPrint("tcpdump tcp -c 5 -w buffer40_1301204516.pcap &")
-    sleep(2)
     h2.cmdPrint("iperf -c 192.168.1.1 -t 60")
+    h1.cmdPrint("tcpdump -c 100 -w buffer40_1301204516.pcap &")
+    sleep(2)
     h1.cmdPrint("tcpdump -r buffer40_1301204516.pcap")
 
     #buffer = 20
     r2.cmdPrint("tc qdisc del dev r2-fa0 root")
     r2.cmdPrint("tc qdisc add dev r2-fa0 root handle 1: pfifo limit 20")
     h1.cmdPrint("iperf -s &")
-    h1.cmdPrint("tcpdump tcp -c 5 -w buffer20_1301204516.pcap &")
-    sleep(2)
     h2.cmdPrint("iperf -c 192.168.1.5 -t 60")
+    h1.cmdPrint("tcpdump -c 100 -w buffer20_1301204516.pcap &")
+    sleep(2)
     h1.cmdPrint("tcpdump -r buffer20_1301204516.pcap")
 
 def runTopo():
