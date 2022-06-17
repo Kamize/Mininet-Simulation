@@ -315,6 +315,22 @@ def test_ping(h1, h2, r1, r2, r3, r4):
     r3.cmdPrint('ping -c5 192.168.1.14') #r3 ping r4 (via network 4)
     r3.cmdPrint('ping -c5 192.168.1.18') #r3 ping r4 (via network 5)
 
+def test_pingCLO1(h1, h2, r1, r2, r3, r4):
+    info('*** CLO 1 :: Testing ping between hosts\n')
+    # h1.cmdPrint('ping -c5 %s' % h2.IP())
+
+    h1.cmdPrint('ping -c5 192.168.1.2') #hostA ping r1 (network 1)
+    h1.cmdPrint('ping -c5 192.168.1.6') #hostA ping r2 (network 2)
+
+    h2.cmdPrint('ping -c5 192.168.1.26') #hostB ping r3 (network 7)
+    h2.cmdPrint('ping -c5 192.168.1.30') #hostB ping r4 (network 8)
+
+    r1.cmdPrint('ping -c5 192.168.1.10') #r1 ping r3 (network 3)
+    r1.cmdPrint('ping -c5 192.168.1.18') #r1 ping r4 (network 5)
+
+    r2.cmdPrint('ping -c5 192.168.1.22') #r2 ping r3 (network 6)
+    r2.cmdPrint('ping -c5 192.168.1.14') #r2 ping r4 (network 4)
+
 def runTopo():
     '''Bootstrap a Mininet network using the Minimal Topology'''
     os.system('mn -cc')
@@ -333,10 +349,14 @@ def runTopo():
     h1,h2,r1,r2,r3,r4 = net.get('hostA','hostB','r1','r2','r3','r4')
     #Assign IP addresses to the hosts & routers
     assign_IP(h1,h2,r1,r2,r3,r4)
-    static_routing(h1,h2,r1,r2,r3,r4)
+    #CLO 1 Connection Test
+    test_pingCLO1(h1,h2,r1,r2,r3,r4)
+
+    #CLO 2 Static Routing
+    # static_routing(h1,h2,r1,r2,r3,r4)
     
-    #test ping
-    test_ping(h1,h2,r1,r2,r3,r4)
+    #CLO 2 Connection Test (Static Routing)
+    # test_ping(h1,h2,r1,r2,r3,r4)
     # info('\n', net.pingAll(), '\n')
     
     CLI(net)
