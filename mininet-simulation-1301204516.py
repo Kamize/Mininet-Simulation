@@ -286,24 +286,34 @@ def static_routing(h1,h2,r1,r2,r3,r4):
 def test_ping(h1, h2, r1, r2, r3, r4):
     # Ping test for CLO 1
     info('*** Testing ping between hosts\n')
-    h1.cmdPrint('ping -c1 192.168.1.2') #hostA ping r1 (network 1)
-    h1.cmdPrint('ping -c1 192.168.1.6') #hostA ping r2 (network 2)
-    h1.cmdPrint('ping -c1 192.168.1.10') #hostA ping r3
-    h1.cmdPrint('ping -c1 192.168.1.14') #hostA ping r4
+    # h1.cmdPrint('ping -c5 %s' % h2.IP())
+    h1.cmdPrint('ping -c5 192.168.1.25') #hostA ping hostB (via network 7)
+    h1.cmdPrint('ping -c5 192.168.1.29') #hostA ping hostB (via network 8)
 
-    h2.cmdPrint('ping -c1 192.168.1.9') #hostB ping r1
-    h2.cmdPrint('ping -c1 192.168.1.13') #hostB ping r2
-    h2.cmdPrint('ping -c1 192.168.1.26') #hostB ping r3 (network 7)
-    h2.cmdPrint('ping -c1 192.168.1.30') #hostB ping r4 (network 8)
+    h1.cmdPrint('ping -c5 192.168.1.2') #hostA ping r1 (network 1)
+    h1.cmdPrint('ping -c5 192.168.1.6') #hostA ping r2 (network 2)
+    h1.cmdPrint('ping -c5 192.168.1.10') #hostA ping r3 (via network 3)
+    h1.cmdPrint('ping -c5 192.168.1.14') #hostA ping r4 (via network 5)
 
-    r1.cmdPrint('ping -c1 192.168.1.21') #r1 ping r2
-    r1.cmdPrint('ping -c1 192.168.1.10') #r1 ping r3 (network 3)
-    r1.cmdPrint('ping -c1 192.168.1.18') #r1 ping r4 (network 5)
+    h2.cmdPrint('ping -c5 192.168.1.9') #hostB ping r1 (via network 3)
+    h2.cmdPrint('ping -c5 192.168.1.13') #hostB ping r2 (via network 6)
+    h2.cmdPrint('ping -c5 192.168.1.26') #hostB ping r3 (network 7)
+    h2.cmdPrint('ping -c5 192.168.1.30') #hostB ping r4 (network 8)
 
-    r2.cmdPrint('ping -c1 192.168.1.22') #r2 ping r3 (network 5)
-    r2.cmdPrint('ping -c1 192.168.1.9') #r2 ping r1
+    r1.cmdPrint('ping -c5 192.168.1.21') #r1 ping r2 (via network 6)
+    r1.cmdPrint('ping -c5 192.168.1.13') #r1 ping r2 (via network 4)
+    r1.cmdPrint('ping -c5 192.168.1.10') #r1 ping r3 (network 3)
+    r1.cmdPrint('ping -c5 192.168.1.18') #r1 ping r4 (network 5)
 
-    r3.cmdPrint('ping -c1 192.168.1.14') #r3 ping r4
+    r2.cmdPrint('ping -c5 192.168.1.9') #r2 ping r1 (via network 3)
+    r2.cmdPrint('ping -c5 192.168.1.17') #r2 ping r1 (via network 5)
+    r2.cmdPrint('ping -c5 192.168.1.22') #r2 ping r3 (network 6)
+    r2.cmdPrint('ping -c5 192.168.1.14') #r2 ping r4 (network 4)
+
+    # r3.cmdPrint('ping -c5 192.168.1.9') #r3 ping r1 (network 3)
+    # r3.cmdPrint('ping -c5 192.168.1.21') #r3 ping r2 (network 6)
+    r3.cmdPrint('ping -c5 192.168.1.14') #r3 ping r4 (via network 4)
+    r3.cmdPrint('ping -c5 192.168.1.18') #r3 ping r4 (via network 5)
 
 def runTopo():
     '''Bootstrap a Mininet network using the Minimal Topology'''
@@ -326,7 +336,7 @@ def runTopo():
     static_routing(h1,h2,r1,r2,r3,r4)
     
     #test ping
-    # test_ping(h1,h2,r1,r2,r3,r4)
+    test_ping(h1,h2,r1,r2,r3,r4)
     # info('\n', net.pingAll(), '\n')
     
     CLI(net)
