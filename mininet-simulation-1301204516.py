@@ -42,7 +42,7 @@ class MyTopo(Topo):
                     bw=bw1) #network 1
         self.addLink(hostA, r2,
                     intfName1 = 'hostA-fa1', 
-                    intfName2 = 'r2-fa1',
+                    intfName2 = 'r2-fa0',
                     cls = TCLink,
                     bw=bw1) #network 2
         #Host B
@@ -53,7 +53,7 @@ class MyTopo(Topo):
                     bw=bw1) #network 7
         self.addLink(hostB, r4,
                     intfName1 = 'hostB-fa1',
-                    intfName2 = 'r4-fa1',
+                    intfName2 = 'r4-fa0',
                     cls = TCLink,
                     bw=bw1) #network 8
         
