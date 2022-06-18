@@ -60,14 +60,30 @@ class MyTopo(Topo):
         #Creating the links between routers
         
         #Network 3
-        self.addLink(r1, r3, intfName1='r1-se2', intfName2='r3-se2', cls = TCLink, bw=bw2)
+        self.addLink(r1, r3, 
+                    intfName1='r1-se2', 
+                    intfName2='r3-se2', 
+                    cls = TCLink, 
+                    bw=bw2)
         #Network 5
-        self.addLink(r1, r4, intfName1='r1-se3', intfName2='r4-se3', cls = TCLink, bw=bw1)
+        self.addLink(r1, r4, 
+                    intfName1='r1-se3', 
+                    intfName2='r4-se3', 
+                    cls = TCLink, 
+                    bw=bw1)
         
         #Network 4
-        self.addLink(r2, r4, intfName1='r2-se2', intfName2='r4-se2', cls = TCLink, bw=bw2)
+        self.addLink(r2, r4, 
+                    intfName1='r2-se2', 
+                    intfName2='r4-se2', 
+                    cls = TCLink, 
+                    bw=bw2)
         #Network 6
-        self.addLink(r2, r3, intfName1='r2-se3', intfName2='r3-se3', cls = TCLink, bw=bw1)
+        self.addLink(r2, r3, 
+                    intfName1='r2-se3', 
+                    intfName2='r3-se3', 
+                    cls = TCLink, 
+                    bw=bw1)
 
 def assign_IP(h1,h2,r1,r2,r3,r4):
     '''Assign IP addresses to the hosts & routers'''
@@ -391,17 +407,17 @@ def runTopo():
     #Assign IP addresses to the hosts & routers
     assign_IP(h1,h2,r1,r2,r3,r4)
     #CLO 1 Connection Test
-    # test_pingCLO1(h1,h2,r1,r2,r3,r4)
+    test_pingCLO1(h1,h2,r1,r2,r3,r4)
 
     #CLO 2 Static Routing
     static_routing(h1,h2,r1,r2,r3,r4)
     
     #CLO 2 Connection Test (Static Routing)
-    # test_ping(h1,h2,r1,r2,r3,r4)
+    test_ping(h1,h2,r1,r2,r3,r4)
     # info('\n', net.pingAll(), '\n')
 
     #CLO 3 inspect traffic using iPerf
-    # tcp_traffic(net)
+    tcp_traffic(net)
 
     #CLO 4 adding buffer to trafficS
     buffered_traffic(h1,h2,r1,r2,r3,r4)
